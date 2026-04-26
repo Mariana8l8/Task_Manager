@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { authAPI } from '../services/api';
+import { setStoredUser } from '../utils/auth';
 import '../styles/Auth.css';
 
 const Register = () => {
@@ -26,9 +28,14 @@ const Register = () => {
     try {
       const response = await authAPI.register(username, email, password, passwordConfirm);
       localStorage.setItem('token', response.token);
+      setStoredUser(response.user);
       navigate('/tasks');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError((err.response?.data as { message?: string })?.message || 'Registration failed');
+      } else {
+        setError('Registration failed');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -98,9 +105,9 @@ const Register = () => {
 
         <p className="auth-link">
           Already have an account?{' '}
-          <a href="/login" className="link">
+          <Link to="/login" className="link">
             Login here
-          </a>
+          </Link>
         </p>
       </div>
     </div>

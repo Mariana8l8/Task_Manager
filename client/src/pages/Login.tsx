@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { authAPI } from '../services/api';
+import { setStoredUser } from '../utils/auth';
 import '../styles/Auth.css';
 
 const Login = () => {
@@ -18,9 +20,14 @@ const Login = () => {
     try {
       const response = await authAPI.login(email, password);
       localStorage.setItem('token', response.token);
-      navigate('/tasks');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      setStoredUser(response.user);
+      navigate(response.user.role === 'admin' ? '/admin' : '/tasks');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError((err.response?.data as { message?: string })?.message || 'Login failed');
+      } else {
+        setError('Login failed');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -66,9 +73,9 @@ const Login = () => {
 
         <p className="auth-link">
           Don't have an account?{' '}
-          <a href="/register" className="link">
+          <Link to="/register" className="link">
             Register here
-          </a>
+          </Link>
         </p>
       </div>
     </div>
