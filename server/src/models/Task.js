@@ -13,9 +13,14 @@ const taskSchema = new mongoose.Schema({
     trim: true,
     maxlength: 1000,
   },
-  completed: {
+  isCompleted: {
     type: Boolean,
     default: false,
+  },
+  position: {
+    type: Number,
+    default: 0,
+    min: 0,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -31,6 +36,10 @@ const taskSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+taskSchema.index({ userId: 1, position: 1 });
+taskSchema.index({ userId: 1, createdAt: -1 });
+taskSchema.index({ userId: 1, isCompleted: 1, position: 1 });
 
 taskSchema.pre('save', function (next) {
   this.updatedAt = Date.now();

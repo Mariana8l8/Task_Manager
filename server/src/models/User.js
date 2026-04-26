@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
+    trim: true,
     match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   },
   password: {
@@ -21,11 +22,22 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user',
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+}, {
+  timestamps: true,
 });
+
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ username: 1 }, { unique: true });
+userSchema.index({ role: 1, isActive: 1 });
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
@@ -44,7 +56,7 @@ userSchema.pre('save', async function (next) {
 
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = mongoose.model('User', userSchema);
