@@ -51,6 +51,21 @@ npm run dev
 Frontend: `http://localhost:5173`  
 Backend: `http://localhost:5001`
 
+The API needs MongoDB. To run it locally with Docker, start `docker compose up -d` and set in `server/.env`:
+```
+MONGO_URI=mongodb://admin:password@localhost:27017/task-manager?authSource=admin
+```
+
+## Deploy to Vercel
+`vercel.json` deploys `client` and `server` as one project: `/api/*` goes to Express (`server/src/app.js`), everything else to the React app. Data is stored in MongoDB Atlas.
+
+Set these environment variables in the Vercel project:
+- `MONGO_URI`: Atlas connection string, including the database name
+- `JWT_SECRET`: a long random string
+- `NODE_ENV`: `production`
+
+In Atlas, allow network access from `0.0.0.0/0`, because Vercel functions have no fixed IP address on standard plans.
+
 ## Create First Admin
 1. Register a regular user from UI.
 2. Promote user:
