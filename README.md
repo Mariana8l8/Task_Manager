@@ -57,7 +57,7 @@ MONGO_URI=mongodb://admin:password@localhost:27017/task-manager?authSource=admin
 ```
 
 ## Deploy to Vercel
-`vercel.json` deploys `client` and `server` as one project: `/api/*` goes to Express (`server/src/app.js`), everything else to the React app. Data is stored in MongoDB Atlas.
+`vercel.json` deploys `client` and `server` as one project: `/api/*` goes to Express through `api/index.js`, everything else to the React app. Data is stored in MongoDB Atlas.
 
 Set these environment variables in the Vercel project:
 - `MONGO_URI`: Atlas connection string, including the database name
