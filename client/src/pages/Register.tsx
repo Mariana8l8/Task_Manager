@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { authAPI } from '../services/api';
 import { setStoredUser } from '../utils/auth';
+import AuthAside from '../components/AuthAside';
 import '../styles/Auth.css';
 
 const Register = () => {
@@ -43,8 +44,9 @@ const Register = () => {
 
   return (
     <div className="auth-container">
+      <AuthAside />
       <div className="auth-card">
-        <h1 className="auth-title">Task Manager</h1>
+        <h1 className="auth-title">Get started</h1>
         <p className="auth-subtitle">Create a new account</p>
 
         {error && <div className="error-message">{error}</div>}
@@ -55,6 +57,7 @@ const Register = () => {
             <input
               type="text"
               id="username"
+              className="field"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Choose a username"
@@ -67,6 +70,7 @@ const Register = () => {
             <input
               type="email"
               id="email"
+              className="field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
@@ -79,6 +83,7 @@ const Register = () => {
             <input
               type="password"
               id="password"
+              className="field"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
@@ -91,6 +96,7 @@ const Register = () => {
             <input
               type="password"
               id="passwordConfirm"
+              className="field"
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
               placeholder="Confirm your password"
@@ -98,7 +104,7 @@ const Register = () => {
             />
           </div>
 
-          <button type="submit" disabled={isLoading} className="submit-button">
+          <button type="submit" disabled={isLoading} className="primary-button submit-button">
             {isLoading ? 'Registering...' : 'Register'}
           </button>
         </form>

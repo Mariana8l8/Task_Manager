@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { authAPI } from '../services/api';
 import { setStoredUser } from '../utils/auth';
+import AuthAside from '../components/AuthAside';
 import '../styles/Auth.css';
 
 const Login = () => {
@@ -35,8 +36,9 @@ const Login = () => {
 
   return (
     <div className="auth-container">
+      <AuthAside />
       <div className="auth-card">
-        <h1 className="auth-title">Task Manager</h1>
+        <h1 className="auth-title">Welcome back</h1>
         <p className="auth-subtitle">Login to your account</p>
 
         {error && <div className="error-message">{error}</div>}
@@ -47,6 +49,7 @@ const Login = () => {
             <input
               type="email"
               id="email"
+              className="field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
@@ -59,6 +62,7 @@ const Login = () => {
             <input
               type="password"
               id="password"
+              className="field"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
@@ -66,7 +70,7 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" disabled={isLoading} className="submit-button">
+          <button type="submit" disabled={isLoading} className="primary-button submit-button">
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>

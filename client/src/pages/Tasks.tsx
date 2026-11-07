@@ -4,6 +4,8 @@ import axios from 'axios';
 import { authAPI, tasksAPI } from '../services/api';
 import type { Task } from '../types/index';
 import { clearAuthStorage, getStoredUser, setStoredUser } from '../utils/auth';
+import Brand from '../components/Brand';
+import { ArrowDownIcon, ArrowUpIcon, EditIcon, TrashIcon } from '../components/Icons';
 import '../styles/Tasks.css';
 
 type TaskFilter = 'all' | 'active' | 'completed';
@@ -239,20 +241,20 @@ const Tasks = () => {
             type="text"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
-            className="task-input"
+            className="field task-input"
             placeholder="Task title"
           />
           <textarea
             value={editDescription}
             onChange={(e) => setEditDescription(e.target.value)}
-            className="task-textarea"
+            className="field task-textarea"
             rows={3}
             placeholder="Task description"
           />
           <div className="task-edit-actions">
             <button
               onClick={() => handleSaveEdit(task._id)}
-              className="secondary-button"
+              className="primary-button"
               disabled={isTaskBusy(task._id)}
             >
               Save
@@ -284,70 +286,92 @@ const Tasks = () => {
   };
 
   const currentUser = getStoredUser();
+  const completedCount = tasks.filter((task) => task.isCompleted).length;
+  const completedPercent = tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0;
 
   return (
-    <div className="tasks-container">
+    <>
+      <header className="topbar">
+        <div className="topbar-inner">
+          <Brand />
+          <div className="topbar-actions">
+            <span className="topbar-user">{currentUser?.username || 'user'}</span>
+            {currentUserRole === 'admin' && (
+              <button onClick={() => navigate('/admin')} className="ghost-button">
+                Admin Panel
+              </button>
+            )}
+            <button onClick={handleLogout} className="ghost-button">
+              Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="tasks-container">
       <div className="tasks-header">
         <div>
-          <h1>My Tasks</h1>
-          <p className="tasks-subtitle">Welcome, {currentUser?.username || 'user'}</p>
+          <h1 className="page-title">My Tasks</h1>
+          <p className="page-subtitle">Welcome, {currentUser?.username || 'user'}</p>
         </div>
-        <div className="tasks-header-actions">
-          {currentUserRole === 'admin' && (
-            <button onClick={() => navigate('/admin')} className="secondary-button">
-              Admin Panel
-            </button>
-          )}
-          <button onClick={handleLogout} className="logout-button">
-            Logout
-          </button>
-        </div>
+        {tasks.length > 0 && (
+          <div className="tasks-progress">
+            <div className="tasks-progress-label">
+              <span>{completedCount} of {tasks.length} done</span>
+              <span>{completedPercent}%</span>
+            </div>
+            <div className="tasks-progress-track">
+              <div className="tasks-progress-fill" style={{ width: `${completedPercent}%` }} />
+            </div>
+          </div>
+        )}
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleAddTask} className="add-task-form">
-        <div className="form-group">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter task title..."
-            className="task-input"
-          />
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="What needs doing?"
+          aria-label="Task title"
+          className="field task-input"
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Add a description (optional)"
+          aria-label="Task description"
+          className="field task-textarea"
+          rows={2}
+        />
+        <div className="add-task-footer">
+          <button type="submit" disabled={isLoading} className="primary-button">
+            {isLoading ? 'Adding...' : 'Add Task'}
+          </button>
         </div>
-
-        <div className="form-group">
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter task description (optional)"
-            className="task-textarea"
-            rows={3}
-          />
-        </div>
-
-        <button type="submit" disabled={isLoading} className="add-button">
-          {isLoading ? 'Adding...' : 'Add Task'}
-        </button>
       </form>
 
       <div className="tasks-controls">
         <div className="tasks-filter-group" role="group" aria-label="Task filter">
           <button
-            className={`ghost-button ${filter === 'all' ? 'is-selected' : ''}`}
+            className={`segment ${filter === 'all' ? 'is-selected' : ''}`}
+            aria-pressed={filter === 'all'}
             onClick={() => setFilter('all')}
           >
             All
           </button>
           <button
-            className={`ghost-button ${filter === 'active' ? 'is-selected' : ''}`}
+            className={`segment ${filter === 'active' ? 'is-selected' : ''}`}
+            aria-pressed={filter === 'active'}
             onClick={() => setFilter('active')}
           >
             Active
           </button>
           <button
-            className={`ghost-button ${filter === 'completed' ? 'is-selected' : ''}`}
+            className={`segment ${filter === 'completed' ? 'is-selected' : ''}`}
+            aria-pressed={filter === 'completed'}
             onClick={() => setFilter('completed')}
           >
             Completed
@@ -355,14 +379,16 @@ const Tasks = () => {
         </div>
 
         <input
-          className="tasks-search-input"
+          className="field"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search tasks..."
+          aria-label="Search tasks"
         />
 
         <select
-          className="tasks-sort-select"
+          className="field"
+          aria-label="Sort tasks"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as TaskSort)}
         >
@@ -398,6 +424,7 @@ const Tasks = () => {
                       checked={task.isCompleted}
                       disabled={isTaskBusy(task._id)}
                       onChange={() => handleToggleComplete(task)}
+                      aria-label={`Mark "${task.title}" as ${task.isCompleted ? 'active' : 'completed'}`}
                     />
                   </label>
                   <div className="task-content">{renderTaskContent(task)}</div>
@@ -405,33 +432,39 @@ const Tasks = () => {
                 <div className="task-actions">
                   <button
                     onClick={() => handleMoveTask(task._id, 'up')}
-                    className="ghost-button"
+                    className="icon-button"
                     disabled={isTaskBusy(task._id) || isFirst || !canReorderInView}
                     aria-label="Move up"
+                    title="Move up"
                   >
-                    ↑
+                    <ArrowUpIcon />
                   </button>
                   <button
                     onClick={() => handleMoveTask(task._id, 'down')}
-                    className="ghost-button"
+                    className="icon-button"
                     disabled={isTaskBusy(task._id) || isLast || !canReorderInView}
                     aria-label="Move down"
+                    title="Move down"
                   >
-                    ↓
+                    <ArrowDownIcon />
                   </button>
                   <button
                     onClick={() => handleStartEdit(task)}
-                    className="secondary-button"
+                    className="icon-button"
                     disabled={isTaskBusy(task._id) || editingTaskId === task._id}
+                    aria-label="Edit"
+                    title="Edit"
                   >
-                    Edit
+                    <EditIcon />
                   </button>
                   <button
                     onClick={() => handleDeleteTask(task._id)}
-                    className="delete-button"
+                    className="icon-button icon-button-danger"
                     disabled={isTaskBusy(task._id)}
+                    aria-label="Delete"
+                    title="Delete"
                   >
-                    Delete
+                    <TrashIcon />
                   </button>
                 </div>
               </div>
@@ -439,7 +472,8 @@ const Tasks = () => {
           })}
         </div>
       )}
-    </div>
+      </main>
+    </>
   );
 };
 

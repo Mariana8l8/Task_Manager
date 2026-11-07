@@ -4,6 +4,7 @@ import axios from 'axios';
 import { adminAPI, authAPI } from '../services/api';
 import type { User, UserRole } from '../types/index';
 import { clearAuthStorage, getStoredUser, setStoredUser } from '../utils/auth';
+import Brand from '../components/Brand';
 import '../styles/Admin.css';
 
 const getErrorMessage = (err: unknown, fallback: string) => {
@@ -145,16 +146,22 @@ const Admin = () => {
   }
 
   return (
-    <div className="admin-container">
+    <>
+      <header className="topbar">
+        <div className="topbar-inner">
+          <Brand />
+          <div className="topbar-actions">
+            <span className="topbar-user">{currentUser?.username}</span>
+            <button className="ghost-button" onClick={() => navigate('/tasks')}>Tasks</button>
+            <button className="ghost-button" onClick={handleLogout}>Logout</button>
+          </div>
+        </div>
+      </header>
+
+      <main className="admin-container">
       <div className="admin-header">
-        <div>
-          <h1>Admin Panel</h1>
-          <p>Manage users and monitor platform statistics</p>
-        </div>
-        <div className="admin-header-actions">
-          <button className="secondary-button" onClick={() => navigate('/tasks')}>Tasks</button>
-          <button className="logout-button" onClick={handleLogout}>Logout</button>
-        </div>
+        <h1 className="page-title">Admin Panel</h1>
+        <p className="page-subtitle">Manage users and monitor platform statistics</p>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -180,11 +187,13 @@ const Admin = () => {
 
       <form className="admin-search" onSubmit={handleSearchSubmit}>
         <input
+          className="field"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by username or email"
+          aria-label="Search users"
         />
-        <button type="submit" className="secondary-button">Search</button>
+        <button type="submit" className="primary-button">Search</button>
       </form>
 
       {isLoading ? (
@@ -208,10 +217,12 @@ const Admin = () => {
 
                 return (
                   <tr key={user.id}>
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
+                    <td className="admin-user-name">{user.username}</td>
+                    <td className="admin-user-email">{user.email}</td>
                     <td>
                       <select
+                        className="field"
+                        aria-label={`Role for ${user.username}`}
                         value={user.role}
                         disabled={isBusy || isSelf}
                         onChange={(e) => handleChangeRole(user.id, e.target.value as UserRole)}
@@ -250,7 +261,8 @@ const Admin = () => {
           </table>
         </div>
       )}
-    </div>
+      </main>
+    </>
   );
 };
 

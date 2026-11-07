@@ -1,40 +1,95 @@
 .auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+}
+
+.auth-aside {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 40px 48px;
+  background: var(--forest);
+  color: var(--on-forest);
+}
+
+.auth-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.6vw, 64px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.auth-tagline em {
+  display: block;
+  color: var(--accent);
+  font-style: normal;
+}
+
+.auth-preview {
+  display: grid;
+  gap: 2px;
+  max-width: 340px;
+  list-style: none;
+}
+
+.auth-preview li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid rgba(238, 241, 226, 0.14);
+  font-size: 14px;
+}
+
+.auth-preview-done {
+  color: var(--on-forest-muted);
+  text-decoration: line-through;
+}
+
+.auth-preview-box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--on-forest-muted);
+  border-radius: 5px;
+}
+
+.auth-preview-done .auth-preview-box {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 
 .auth-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  padding: 40px;
+  align-self: center;
+  justify-self: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  padding: 48px 24px;
 }
 
 .auth-title {
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 700;
-  color: #333;
-  margin: 0 0 10px 0;
-  text-align: center;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
 }
 
 .auth-subtitle {
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  margin-bottom: 30px;
+  margin: 8px 0 32px;
+  color: var(--muted);
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .form-group {
@@ -43,72 +98,53 @@
 }
 
 .form-group label {
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 13px;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.form-group input {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.3s;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .submit-button {
-  padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-}
-
-.submit-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.error-message {
-  background-color: #fee;
-  color: #c33;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  margin-bottom: 20px;
-  border: 1px solid #fcc;
+  width: 100%;
+  margin-top: 6px;
 }
 
 .auth-link {
-  text-align: center;
+  margin-top: 24px;
+  color: var(--muted);
   font-size: 14px;
-  color: #666;
-  margin-top: 20px;
+  text-align: center;
 }
 
 .link {
-  color: #667eea;
-  text-decoration: none;
+  color: var(--ink);
   font-weight: 600;
-  transition: color 0.2s;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
 .link:hover {
-  color: #764ba2;
+  text-decoration-color: currentColor;
+}
+
+@media (max-width: 860px) {
+  .auth-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .auth-aside {
+    padding: 16px 24px;
+  }
+
+  .auth-tagline,
+  .auth-preview {
+    display: none;
+  }
+
+  .auth-card {
+    align-self: start;
+    padding-top: 40px;
+  }
 }
